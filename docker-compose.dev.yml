@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  brocker:
+    container_name: e_comm3rce_brocker
+    image: redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379/tcp
+    networks:
+      - brocker
+    volumes:
+      - brocker:/data/redis
+
+  db:
+    container_name: e_comm3rce_db
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: pass
+      PGDATA: /data/postgres
+    volumes:
+      - db:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - db
+    restart: unless-stopped
+
+  backend:
+    container_name: e_comm3rce_backend
+    volumes:
+      - static:/static
+    env_file:
+      - ./backend/.env.dev
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - brocker
+  
+  celery:
+    build: ./backend
+    command: celery -A e_comm3rce worker -l INFO
+
+  nginx:
+    container_name: e_comm3rce_nginx
+    build: ./nginx
+    volumes:
+      - static:/static
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+networks:
+  db:
+    driver: bridge
+  brocker:
+    driver: bridge
+
+volumes:
+  brocker:
+  db:
+  static:
