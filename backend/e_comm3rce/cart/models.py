@@ -31,7 +31,7 @@ class CartProduct(models.Model):
         verbose_name_plural = 'Cart products'
 
     def __str__(self) -> str:
-        return f'Cart #{self.cart.id}, product ${self.product.id}'
+        return f'Cart #{self.cart.id}, product #{self.product.id}'
     
     def save(self, *args, **kwargs):
         self.total_price = self.qty * self.product.price
