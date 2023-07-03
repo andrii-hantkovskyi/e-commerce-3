@@ -10,7 +10,7 @@ class Cart(models.Model):
     last_updated = models.DateTimeField(auto_now=True)
 
     def get_formatted_str(self):
-        f'{self.owner.get_full_name()} #{self.id}'
+        return f'{self.owner.get_full_name()} #{self.id}'
 
     def __str__(self) -> str:
         return self.get_formatted_str()

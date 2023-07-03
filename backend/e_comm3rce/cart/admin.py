@@ -9,7 +9,7 @@ class CartAdmin(admin.ModelAdmin):
     list_display = ('id', 'link_to_owner', 'total_price', 'last_updated')
     list_display_links = ('id',)
     list_filter = ('total_price', 'last_updated')
-    ordering = ('-last_updated',)
+    ordering = ('last_updated',)
     readonly_fields = ('total_price',)
 
     def link_to_owner(self, obj: Cart):
