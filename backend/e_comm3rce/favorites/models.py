@@ -2,7 +2,7 @@ from django.db import models
 
 
 class FavoriteList(models.Model):
-    owner = models.OneToOneField('users.Customer', on_delete=models.CASCADE, verbose_name='List owner')
+    owner = models.OneToOneField('users.Customer', on_delete=models.CASCADE, verbose_name='List owner', related_name='favorite_list')
 
 
     class Meta:
@@ -17,8 +17,8 @@ class FavoriteList(models.Model):
     
 
 class FavoriteProduct(models.Model):
-    favorite_list = models.ForeignKey(FavoriteList, on_delete=models.CASCADE, verbose_name='List')
-    product = models.ForeignKey('products.Product', on_delete=models.CASCADE, verbose_name='Product')
+    favorite_list = models.ForeignKey(FavoriteList, on_delete=models.CASCADE, verbose_name='List', related_name='products')
+    product = models.ForeignKey('products.Product', on_delete=models.CASCADE, verbose_name='Product', related_name='favorite_products')
 
 
     class Meta:
