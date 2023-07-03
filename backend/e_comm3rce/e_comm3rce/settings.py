@@ -19,7 +19,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load env vars
 env = Env()
-env.read_env()
+env.read_env(".env.dev")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -32,6 +32,7 @@ DEBUG = env.bool('DEBUG')
 
 ALLOWED_HOSTS = env.list('ALLOWED_HOSTS')
 CORS_ALLOWED_ORIGINS = env.list('CORS_ALLOWED_ORIGINS')
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS')
 
 
 # Application definition
@@ -45,10 +46,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'oauth2_provider',
-    'social_django',
-    'drf_social_oauth2',
-    'corsheaders'
+    'corsheaders',
+    'phonenumber_field',
+
+    'users',
+    'products',
+    'cart'
 ]
 
 MIDDLEWARE = [
@@ -128,8 +131,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -141,15 +144,9 @@ CELERY_RESULT_BACKEND = env.str('CELERY_RESULT_BACKEND')
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'drf_social_oauth2.authentication.SocialAuthentication'
+        'rest_framework_simplejwt.authentication.JWTAuthentication'
     )
 }
-
-AUTHENTICATION_BACKENDS = (
-   'drf_social_oauth2.backends.DjangoOAuth2',
-   'django.contrib.auth.backends.ModelBackend'
-)
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=8),
@@ -159,5 +156,4 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("JWT",)
 }
 
-DRFSO2_URL_NAMESPACE = 'oauth'
-ACTIVATE_JWT = True
+AUTH_USER_MODEL = "users.User"
