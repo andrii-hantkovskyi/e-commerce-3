@@ -21,4 +21,5 @@ def send_mails_for_waiting_users():
                 [waiting_list.owner.user.email],
                 fail_silently=False,
             )
+        [av_product.delete() for av_product in available_products]
     return None
