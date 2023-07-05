@@ -46,7 +46,7 @@ services:
     hostname: celery
     build:
       context: ./backend
-    command: celery -A e_comm3rce worker -l INFO
+    command: celery -A e_comm3rce worker -B -l INFO
     env_file:
       - ./backend/.env.dev
     links:
