@@ -10,7 +10,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'link_to_owner', 'link_to_cart',
                     'delivery_type', 'status', 'created', 'last_updated')
     list_display_links = ('id',)
-    list_editable = ('delivery_type', 'status')
+    list_editable = ('status',)
     list_filter = ('delivery_type', 'status', 'created', 'last_updated')
     ordering = ('created', 'last_updated')
     readonly_fields = ('created', 'last_updated')

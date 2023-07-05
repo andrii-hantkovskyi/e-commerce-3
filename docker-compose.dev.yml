@@ -1,18 +1,18 @@
 version: '3.8'
 
 services:
-  brocker:
+  redis:
     image: redis
     restart: unless-stopped
+    hostname: redis
     ports:
       - 6379:6379/tcp
-    networks:
-      - backendnetwork
     volumes:
-      - brocker:/data/redis
+      - redis:/data/redis
 
   db:
     image: postgres
+    hostname: db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
@@ -21,11 +21,10 @@ services:
       - db:/data/postgres
     ports:
       - 5432:5432
-    networks:
-      - backendnetwork
     restart: unless-stopped
 
   backend:
+    hostname: backend
     volumes:
       - static:/static
     env_file:
@@ -33,46 +32,56 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    command: ["./entrypoint.sh"]
     ports:
       - 8000:8000
     depends_on:
       - db
-      - brocker
-    networks:
-      - backendnetwork
+      - redis
     links:
       - db:db
-      - brocker:brocker
+      - redis:redis
   
   celery:
-    build: ./backend
+    hostname: celery
+    build:
+      context: ./backend
     command: celery -A e_comm3rce worker -l INFO
     env_file:
       - ./backend/.env.dev
+    links:
+      - redis:redis
     depends_on:
-      - brocker
-      - backend
-      - db
-    networks:
-      - backendnetwork
+      - redis
+
+  flower:
+    build:
+      context: ./backend
+    hostname: flower
+    command: celery -A e_comm3rce flower
+    env_file:
+      - ./backend/.env.dev
+    links:
+      - redis:redis
+    depends_on:
+      - redis
+    ports:
+      - 5555:5555
+
 
   nginx:
+    hostname: nginx
     build: ./nginx
     volumes:
       - static:/static
     ports:
       - 80:80
+    links:
+      - backend:backend
     depends_on:
       - backend
-    networks:
-      - backendnetwork
-
-
-networks:
-  backendnetwork:
-    driver: bridge
 
 volumes:
-  brocker:
+  redis:
   db:
   static:
