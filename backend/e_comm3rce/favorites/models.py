@@ -2,8 +2,8 @@ from django.db import models
 
 
 class FavoriteList(models.Model):
-    owner = models.OneToOneField('users.Customer', on_delete=models.CASCADE, verbose_name='List owner', related_name='favorite_list')
-
+    owner = models.OneToOneField('users.Customer', on_delete=models.CASCADE, verbose_name='List owner',
+                                 related_name='favorite_list')
 
     class Meta:
         verbose_name = 'Favorite list'
@@ -14,12 +14,13 @@ class FavoriteList(models.Model):
 
     def __str__(self):
         return self.get_formatted_str()
-    
+
 
 class FavoriteProduct(models.Model):
-    favorite_list = models.ForeignKey(FavoriteList, on_delete=models.CASCADE, verbose_name='List', related_name='products')
-    product = models.ForeignKey('products.Product', on_delete=models.CASCADE, verbose_name='Product', related_name='favorite_products')
-
+    favorite_list = models.ForeignKey(FavoriteList, on_delete=models.CASCADE, verbose_name='List',
+                                      related_name='products')
+    product = models.ForeignKey('products.Product', on_delete=models.CASCADE, verbose_name='Product',
+                                related_name='favorite_products')
 
     class Meta:
         verbose_name = 'Favorite product'
