@@ -1,7 +1,7 @@
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-
+from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+
 
 class UserManager(BaseUserManager):
     def create_user(self, email, password=None):
@@ -31,7 +31,7 @@ class User(AbstractBaseUser):
 
     def __str__(self) -> str:
         return self.email
-    
+
     def has_perm(self, perm, obj=None):
         return True
 
@@ -45,10 +45,10 @@ class Customer(models.Model):
     first_name = models.CharField(max_length=255, verbose_name="First name")
     last_name = models.CharField(
         max_length=255, verbose_name="Last name")
-    phone_number = PhoneNumberField(unique=True, null=True, blank = True, verbose_name='Phone number')
+    phone_number = PhoneNumberField(unique=True, null=True, blank=True, verbose_name='Phone number')
 
     def __str__(self):
         return self.user.email
-    
+
     def get_full_name(self):
         return f'{self.first_name} {self.last_name}'
