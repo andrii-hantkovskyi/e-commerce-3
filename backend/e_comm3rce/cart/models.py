@@ -1,12 +1,13 @@
-from django.db.models.signals import post_save
-from django.dispatch import receiver
 from django.db import models
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 
-# Create your models here.
 
 class Cart(models.Model):
-    owner = models.ForeignKey("users.Customer", on_delete=models.CASCADE, related_name='carts', verbose_name="Cart owner")
-    total_price = models.DecimalField(verbose_name="Total price", decimal_places=2, max_digits=10, null=True, blank=True)
+    owner = models.ForeignKey("users.Customer", on_delete=models.CASCADE, related_name='cart',
+                              verbose_name="Cart owner")
+    total_price = models.DecimalField(verbose_name="Total price", decimal_places=2, max_digits=10, null=True,
+                                      blank=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     def get_formatted_str(self):
@@ -14,15 +15,17 @@ class Cart(models.Model):
 
     def __str__(self) -> str:
         return self.get_formatted_str()
-    
+
     def save(self, *args, **kwargs):
         if self.id:
             self.total_price = sum([cart_product.total_price for cart_product in self.products.all()])
         return super().save(*args, **kwargs)
 
+
 class CartProduct(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name='products', verbose_name="Cart")
-    product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="cart_products", verbose_name="Product")
+    product = models.ForeignKey("products.Product", on_delete=models.CASCADE, related_name="cart_products",
+                                verbose_name="Product")
     qty = models.PositiveIntegerField(verbose_name="Product quantity")
     total_price = models.DecimalField(verbose_name="Total price", decimal_places=2, max_digits=10)
 
@@ -32,11 +35,17 @@ class CartProduct(models.Model):
 
     def __str__(self) -> str:
         return f'Cart #{self.cart.id}, product #{self.product.id}'
-    
+
     def save(self, *args, **kwargs):
         self.total_price = self.qty * self.product.price
         return super().save(*args, **kwargs)
 
+
 @receiver(post_save, sender=CartProduct, dispatch_uid="recalculated_total_price")
+def recalculate_total_price(sender, instance, **kwargs):
+    instance.cart.save()
+
+
+@receiver(post_delete, sender=CartProduct, dispatch_uid="deleted_cart_product")
 def recalculate_total_price(sender, instance, **kwargs):
     instance.cart.save()

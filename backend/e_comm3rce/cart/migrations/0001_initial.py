@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('total_price', models.DecimalField(decimal_places=2, max_digits=10, verbose_name='Total price')),
                 ('last_updated', models.DateTimeField(auto_now=True)),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='carts', to='users.customer', verbose_name='Cart owner')),
+                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cart', to='users.customer', verbose_name='Cart owner')),
             ],
         ),
         migrations.CreateModel(
