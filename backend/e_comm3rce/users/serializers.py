@@ -1,11 +1,11 @@
-from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
 from users.models import Customer
 
 
 class CustomerSerializer(ModelSerializer):
-    email = serializers.SerializerMethodField()
+    email = SerializerMethodField()
 
     class Meta:
         model = Customer

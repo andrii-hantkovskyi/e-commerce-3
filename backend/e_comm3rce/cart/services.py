@@ -2,11 +2,15 @@ from cart.models import Cart, CartProduct
 
 
 def get_last_cart_by_customer_id_or_create(customer_id: int) -> Cart:
-    cart = Cart.objects.filter(owner_id=customer_id).last()
+    cart = Cart.objects.filter(owner_id=customer_id, order=None).last()
     if not cart:
         created_cart = Cart.objects.create(owner_id=customer_id)
         return created_cart
     return cart
+
+
+def get_cart_by_id(cart_id: int) -> Cart:
+    return Cart.objects.get(id=cart_id)
 
 
 def add_product_to_cart(cart_id: int, product_id: int) -> None:
